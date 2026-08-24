@@ -37,3 +37,8 @@ I'll check both $k_{\text{eff}}$ and the overall flux shape for convergence (wit
 * **Analytical Verification:** Compare the computed flux and $k_{\text{eff}}$ against the known analytical solution.
 * **Multi-Group Extension:** Generalize the script to handle multiple energy groups.
 * **Documentation:** Add usage instructions, requirements, and expected outputs once everything is pushed.
+  
+## References
+- J. J. Duderstadt, L. J. Hamilton, *Nuclear Reactor Analysis*, John Wiley & Sons, 1976.
+  - Chapter 5 - One-speed neutron diffusion equation, boundary conditions, and reactor criticality calculations for a bare slab.
+  - Chapter 7 - Finite difference spatial discretization, matrix eigenvalue formulation $A\phi = \frac{1}{k_{\text{eff}}} F \phi$, and the power iteration (source iteration) algorithm implemented in the solver.
