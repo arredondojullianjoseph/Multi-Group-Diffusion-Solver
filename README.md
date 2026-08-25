@@ -27,7 +27,7 @@ Writing this out for every interior node turns the continuous problem into a gen
 
 ## Current Implementation
 
-- **Core Solver:** Sets up and solves our 1D reactor slab problem in in Python, using `numpy` and `scipy`. Builds the tridiagonal matrix with `scipy.sparse.diags` and factoring it just once upfront using `splu`. Because the matrix is mostly zeros, factoring it once avoids heavy lifting, will matter once we start working with much finer meshes. From there, we kick off our power iteration loop starting with a flat guess for the flux and $k^{(0)} = 1$. In each iteration, we estimate the fission source using our current flux shape, solve for the new flux by running it through our pre-factored matrix, update $k_{\text{eff}}$ using the ratio of the new and old source sums, and finally normalize the flux by its maximum value to keep everything clean and stable for the next round.
+- **Core Solver:** Sets up and solves our 1D reactor slab problem in in Python, using `numpy` and `scipy`. Builds the tridiagonal matrix with `scipy.sparse.diags` and factoring it just once upfront using `splu`. Because the matrix is mostly zeros, factoring it once avoids heavy lifting(this will matter once we start working with much finer meshes). From there, we kick off our power iteration loop starting with a flat guess for the flux and $k^{(0)} = 1$. In each iteration, we estimate the fission source using our current flux shape, solve for the new flux by running it through our pre-factored matrix, update $k_{\text{eff}}$ using the ratio of the new and old source sums, and finally normalize the flux by its maximum value to keep everything clean and stable for the next round.
 
 ## Usage
 
