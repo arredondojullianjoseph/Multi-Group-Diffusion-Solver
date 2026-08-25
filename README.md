@@ -30,7 +30,7 @@ Writing this out for every interior node turns the continuous problem into a gen
 - **Analytical Verification:** Compare the computed flux and $k_{\text{eff}}$ against the known analytical solution.
 - **Multi-Group Extension:** Generalize the script to handle multiple energy groups.
 - **Documentation:** Expand usage instructions and expected outputs as new pieces (validation, multi-region, multi-group) get added.
-- 
+  
 ## Usage
 make sure you have `numpy` and `scipy` installed then run:
 
