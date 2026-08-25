@@ -2,7 +2,9 @@
 
 Status: Work in Progress 🚧
 
-Welcome! I'm building this multi-group neutron diffusion solver from scratch in Python, starting with the simplest case: a bare, homogeneous, one-group slab. That single-group solver is now written and runs (`diffusion_1group.py`) — next up is checking it against the known analytical solution before I move on to multiple regions and multiple groups.
+Welcome! I'm building this multi-group neutron diffusion solver from scratch in Python, starting with the simplest case: a bare, homogeneous, one-group slab. That single-group solver is now in place. 
+
+**Next Up:** Checking the script against the known analytical solution before moving on to multiple regions and multiple groups.
 
 **Scope:** A self-study project to verify the neutron diffusion equation and experiment with numerical methods.
 
