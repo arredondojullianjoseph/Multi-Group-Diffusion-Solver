@@ -65,34 +65,49 @@ k_eff = 1.068368
 
 That slab is slightly supercritical by construction ($\nu\Sigma_f$ a bit larger than $\Sigma_a$), so $k_{\text{eff}}$ a bit above 1 is the expected result, confirming the solver runs and converges cleanly.
 
-### Analytical verification
+## Analytical Verification
 
-Running `python analytical_verification.py` as-is prints:
+Running `python analytical_verification.py` runs two checks: a single run at N = 200 and a mesh sweep from N = 25 to N = 800.
 
-#### Single run check (N = 200)
+### Single run check (N = 200)
 
 | Quantity | Value |
 |---|---|
 | Iterations to converge | 79 |
-| Numerical k_eff | 1.068368 |
-| Analytical k_eff | 1.068367 |
-| Relative k_eff error | 5.834e-07 |
-| Max flux error | 4.049e-08 |
+| k_eff (numerical) | 1.068368 |
+| k_eff (exact) | 1.068367 |
+| k_eff error | 5.834e-07 |
+| Flux max error | 4.049e-08 |
 
-#### Mesh convergence study
+The solver finds the exact eigenvalue to within 6e-7 and the flux shape to within 4e-8.
 
-| Mesh points (N) | Grid spacing (Δx) | k_eff error (relative) | Observed order |
-|---|---|---|---|
+### Mesh convergence test
+
+The script sweeps the mesh from N = 25 to N = 800 and prints the flux error at each resolution:
+
+| N | Δx | Flux Error | Order |
+|---:|---:|---:|---:|
+| 25 | 3.8462 | 3.8937e-08 | N/A |
+| 50 | 1.9608 | 4.2155e-08 | -0.118 |
+| 100 | 0.9901 | 4.0819e-08 | 0.047 |
+| 200 | 0.4975 | 4.0486e-08 | 0.012 |
+| 400 | 0.2494 | 4.0405e-08 | 0.003 |
+| 800 | 0.1248 | 4.0385e-08 | 0.001 |
+
+The flux error stays flat at around 4e-08 across all mesh sizes, and the observed order values are noise. This is a special property of the homogeneous slab with constant coefficients. The only remaining error should be round-off.
+
+The convergence test that actually tells us something is the **k_eff error**:
+
+| N | Δx | k_eff error | Observed order |
+|---:|---:|---:|---:|
 | 25 | 3.8462 | 3.497e-05 | N/A |
-| 50 | 1.9608 | 9.090e-06 | 2.000 |
-| 100 | 0.9901 | 2.317e-06 | 2.001 |
-| 200 | 0.4975 | 5.834e-07 | 2.004 |
-| 400 | 0.2494 | 1.451e-07 | 2.015 |
-| 800 | 0.1248 | 3.485e-08 | 2.061 |
+| 50 | 1.9608 | 9.090e-06 | 1.944 |
+| 100 | 0.9901 | 2.317e-06 | 1.972 |
+| 200 | 0.4975 | 5.834e-07 | 1.989 |
+| 400 | 0.2494 | 1.451e-07 | 2.007 |
+| 800 | 0.1248 | 3.485e-08 | 2.057 |
 
-Observed order climbs slightly above 2 at the finest meshes, which is round-off in the error itself becoming comparable to the truncation error being measured, not a change in the discretization's accuracy.
-
-The flux shape matches the exact sine solution to machine precision at every mesh size in this sweep (max error stays flat near $4\times10^{-8}$ regardless of $N$), for the reason given above: it isn't a useful signal for checking convergence order here, which is why this table tracks $k_{\text{eff}}$ error instead.
+As the mesh refines, the observed order settles at 2. The slight overshoot at the finest mesh is round-off in the error measurement, not a change in how the discretization behaves. This confirms the central-difference stencil is second-order accurate for the eigenvalue.
 
 ## References
 
