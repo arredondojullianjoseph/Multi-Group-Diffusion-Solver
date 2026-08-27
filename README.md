@@ -46,12 +46,12 @@ python Diffusion_1group.py
 to run the analytical verification:
 
 ```bash
-python Analytical_verification.py
+python analytical_verification.py
 ```
 
 ## Expected Output
 ### Core Solver
-Running `python diffusion_1group.py` as-is prints:
+Running `python Diffusion_1group.py` as-is prints:
 
 ```
 Converged in 79 iterations!
