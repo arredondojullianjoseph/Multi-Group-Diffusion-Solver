@@ -5,7 +5,7 @@ Checks how close the numerical k_eff and flux shape are to the analytical soluti
 """
 
 import numpy as np
-from Diffusion_1group import make_matrices, find_k_eff
+#from Diffusion_1group import make_matrices, find_k_eff
 
 
 def exact_k(D, Sigma_a, nu_Sigma_f, L):
@@ -55,16 +55,21 @@ if __name__ == "__main__":
     print(f"k_eff (exact)     = {k_exact:.6f}")
     print(f"k_eff error       = {k_error:.3e}")
     print(f"Flux max error    = {flux_error:.3e}\n")
-    print("--- Mesh convergence test ---")
+    
+    print("--- Mesh convergence test (flux error) ---")
     print(f"{'N':>5} | {'Delta_x':>9} | {'Flux Error':>12} | {'Order':>6}")
     print("-" * 45)
     mesh_sizes = [25, 50, 100, 200, 400, 800]
     prev_err = None
     prev_dx = None
+    flux_errors = []
+    dx_values = []
+    
     for N in mesh_sizes:
         _, _, _, flux_err, _, dx = check_mesh(D, Sigma_a, nu_Sigma_f, L, N)
-
-        # Calculate convergence order if we have a previous run to compare against
+        flux_errors.append(flux_err)
+        dx_values.append(dx)
+        
         if prev_err is not None:
             order = np.log(prev_err / flux_err) / np.log(prev_dx / dx)
             order_str = f"{order:.3f}"
@@ -72,3 +77,21 @@ if __name__ == "__main__":
             order_str = "N/A"
         print(f"{N:>5} | {dx:>9.4f} | {flux_err:>12.4e} | {order_str:>6}")
         prev_err, prev_dx = flux_err, dx
+    
+    print("\n--- Mesh convergence test (k_eff error) ---")
+    print(f"{'N':>5} | {'Delta_x':>9} | {'k_eff Error':>12} | {'Order':>6}")
+    print("-" * 45)
+    
+    prev_err = None
+    prev_dx = None
+    
+    for i, N in enumerate(mesh_sizes):
+        _, _, k_err, _, _, dx = check_mesh(D, Sigma_a, nu_Sigma_f, L, N)
+        
+        if prev_err is not None:
+            order = np.log(prev_err / k_err) / np.log(prev_dx / dx)
+            order_str = f"{order:.3f}"
+        else:
+            order_str = "N/A"
+        print(f"{N:>5} | {dx:>9.4f} | {k_err:>12.4e} | {order_str:>6}")
+        prev_err, prev_dx = k_err, dx
