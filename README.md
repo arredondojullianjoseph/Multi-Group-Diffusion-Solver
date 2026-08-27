@@ -13,7 +13,9 @@ The script solves the one-group neutron diffusion equation for $k_{\text{eff}}$ 
 
 $$ -D \frac{d^2 \phi(x)}{dx^2} + \Sigma_a \phi(x) = \frac{1}{k_{\text{eff}}} \nu \Sigma_f \phi(x) $$
 
-This is set for a bare slab of width $L$ (from $x = 0$ to $x = L$), with zero-flux boundary conditions at both edges: $\phi(0) = \phi(L) = 0$.
+This equation states that in a steady state, the rate of neutron loss (left side: leakage + absorption) equals the rate of neutron production from fission (right side), scaled by $1/k$.
+
+The script's default is for a bare slab of width $L$ (from $x = 0$ to $x = L$), with zero-flux boundary conditions at both edges: $\phi(0) = \phi(L) = 0$.
 
 **Discretization:** I use finite differences on a uniform interior mesh with spacing $\Delta x = L / (N+1)$, placing nodes at $x_i = i\Delta x$ for $i = 1, \dots, N$. The two physical edges aren't unknowns, since $\phi$ is fixed at exactly zero there rather than solved for. Approximating the second derivative with a standard central difference and plugging it into the diffusion equation at node $i$ gives:
 
