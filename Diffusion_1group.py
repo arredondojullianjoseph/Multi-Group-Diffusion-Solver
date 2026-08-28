@@ -1,7 +1,7 @@
 """
 Diffusion_1group.py
 
-Finite-difference solver for the 1D neutron diffusion eigenvalue problem, 
+Finite-difference solver for the 1D neutron diffusion eigenvalue problem,
 using sparse matrix operations and power iteration to find k_eff and flux.
 """
 import numpy as np
@@ -22,14 +22,14 @@ def make_matrices(D, Sigma_a, nu_Sigma_f, L, N):
     nu_Sigma_f = np.full(N, nu_Sigma_f, dtype=float) if np.isscalar(nu_Sigma_f) else np.asarray(nu_Sigma_f, dtype=float)
 
     # D_face handles boundaries and internal interfaces.
-    # Edges just use the neighboring node's D value since it's a vacuum boundary outside.
+    # Edges just use the neighboring node's D value.
     D_face = np.empty(N + 1)
     D_face[0] = D[0]
     D_face[N] = D[-1]
     D_face[1:N] = 2.0 * D[:-1] * D[1:] / (D[:-1] + D[1:])
 
     A_ii = (D_face[:-1] + D_face[1:]) / Delta_x**2 + Sigma_a
-    A_off = -D_face[1:N] / Delta_x**2    # Symmetric coupling between adjacent nodes
+    A_off = -D_face[1:N] / Delta_x**2   
 
     A = diags(
         [A_off, A_ii, A_off],
@@ -62,14 +62,14 @@ def find_k_eff(A, nu_Sigma_f, tol=1e-8, max_iter=5000):
     N = A.shape[0]
     phi = np.ones(N)             # A flat initial guess works great for a homogeneous slab
     k = 1.0
-    lu = splu(A)                 # LU decomposition for efficient solves   
+    lu = splu(A)                 # LU decomposition for efficient solves
     for i in range(1, max_iter + 1):
         S_old = nu_Sigma_f * phi             # Estimate fission source from current flux
         phi_new = lu.solve(S_old / k)        # Solve the linear system
         S_new = nu_Sigma_f * phi_new
         k_new = k * np.sum(S_new) / np.sum(S_old)
         phi_new /= np.max(np.abs(phi_new))   # Normalize the flux shape
-        
+
         # Check if both eigenvalue and flux have converged
         if abs(k_new - k) < tol and np.max(np.abs(phi_new - phi)) < tol:
             return k_new, phi_new, i
@@ -77,8 +77,8 @@ def find_k_eff(A, nu_Sigma_f, tol=1e-8, max_iter=5000):
     raise RuntimeError(f"Power iteration failed to converge within the {max_iter} step limit.")
 
 if __name__ == "__main__":
-    
-    # Test a slightly supercritical slab to make sure everything runs smoothly
+
+    #Homogeneous slab test
     D = 1.5
     Sigma_a = 0.05
     nu_Sigma_f = 0.055
@@ -86,5 +86,16 @@ if __name__ == "__main__":
     N = 200
     A, nu_Sigma_f, Delta_x, x = make_matrices(D, Sigma_a, nu_Sigma_f, L, N)
     k_eff, phi, n_iter = find_k_eff(A, nu_Sigma_f)
-    print(f"Converged in {n_iter} iterations!")
-    print(f"k_eff = {k_eff:.6f}")
+    print(f"Homogeneous: converged in {n_iter} iterations, k_eff = {k_eff:.6f}")
+
+    # Two‑region test 
+    regions = [
+        (0.0, 50.0, 1.0, 0.02, 0.025),    
+        (50.0, 70.0, 0.5, 0.01, 0.0)      
+    ]
+    L_total = 70.0
+    N = 280
+    D_arr, Sigma_a_arr, nu_Sigma_f_arr = build_region_arrays(regions, L_total, N)
+    A, nu_Sigma_f_arr, dx, x = make_matrices(D_arr, Sigma_a_arr, nu_Sigma_f_arr, L_total, N)
+    k_eff2, phi2, iter2 = find_k_eff(A, nu_Sigma_f_arr)
+    print(f"Two‑region : converged in {iter2} iterations, k_eff = {k_eff2:.6f}")
