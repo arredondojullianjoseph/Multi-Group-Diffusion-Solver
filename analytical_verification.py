@@ -5,7 +5,7 @@ Checks how close the numerical k_eff and flux shape are to the analytical soluti
 """
 
 import numpy as np
-#from Diffusion_1group import make_matrices, find_k_eff
+from Diffusion_1group import make_matrices, find_k_eff
 
 
 def exact_k(D, Sigma_a, nu_Sigma_f, L):
