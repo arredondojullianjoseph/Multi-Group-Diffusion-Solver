@@ -32,7 +32,7 @@ At a material interface, $D$ is discontinuous, but the neutron current, $D \, d\
 
 - **Core solver:** sets up and solves the 1D reactor slab problem in Python, using `numpy` and `scipy`. Builds the tridiagonal matrix with `scipy.sparse.diags` and factors it once upfront with `splu`. Because the matrix is mostly zeros, factoring it once avoids repeated work that will matter once the mesh gets much finer. From there, the power iteration loop starts with a flat flux guess and $k^{(0)} = 1$. Each step estimates the fission source from the current flux, solves for the new flux through the pre-factored matrix, updates $k_{\text{eff}}$ using the ratio of the new and old source sums, and normalizes the flux by its maximum value.
 - **Analytical verification:** tests the core solver against the exact solution for a bare slab. Refining the mesh from 25 to 800 nodes, $k_{\text{eff}}$ error drops by a factor of about 4 each time the mesh is halved, confirming the expected second-order accuracy of the central-difference stencil. The flux shape matches the exact sine solution to within $10^{-7}$ at every mesh size tested, independent of $N$: this discrete boundary condition makes the sine an exact eigenvector of the tridiagonal operator, so there's no discretization error left in the flux shape for this test case, only round-off.
-- **Multi-region extension:** `make_matrices` is generalized to take $D$, $\Sigma_a$, and $\nu\Sigma_f$ as either scalars or per-node arrays. Same function now handles the homogeneous slab and a slab built from multiple materials. `build_region_arrays` maps a list of `(start, end, D, Sigma_a, nu_Sigma_f)` regions onto the mesh. A two-region test case (50 cm fuel, 20 cm reflector, $N = 280$) converges to $k_{\text{eff}} = 0.951846$ in 70 iterations.
+- **Multi-region extension:** `make_matrices` is generalized to take $D$, $\Sigma_a$, and $\nu\Sigma_f$ as either scalars or per-node arrays. Same function now handles the homogeneous slab and a slab built from multiple materials. `build_region_arrays` maps a list of `(start, end, D, Sigma_a, nu_Sigma_f)` regions onto the mesh. A two-region test case (50 cm fuel, 20 cm reflector, $N = 280$) converges to $k_{\text{eff}} = 1.115333$ in 70 iterations.
 
 ## What's next?
 
@@ -48,3 +48,73 @@ To run the core solver, make sure you have `numpy` and `scipy` installed, then r
 
 ```bash
 python Diffusion_1group.py
+```
+
+To run the analytical verification:
+
+```bash
+python analytical_verification.py
+```
+
+## Expected output
+
+### Core solver
+
+Running `python Diffusion_1group.py` as-is prints:
+
+```
+Converged in 79 iterations!
+k_eff = 1.068368
+```
+
+That slab is slightly supercritical by construction ($\nu\Sigma_f$ a bit larger than $\Sigma_a$), so $k_{\text{eff}}$ a bit above 1 is the expected result, confirming the solver runs and converges cleanly.
+
+## Analytical Verification
+
+Running `python analytical_verification.py` runs two checks: a single run at N = 200 and a mesh sweep from N = 25 to N = 800.
+
+### Single run check (N = 200)
+
+| Quantity | Value |
+|---|---|
+| Iterations to converge | 79 |
+| k_eff (numerical) | 1.068368 |
+| k_eff (exact) | 1.068367 |
+| k_eff error | 5.834e-07 |
+| Flux max error | 4.049e-08 |
+
+The solver finds the exact eigenvalue to within 6e-7 and the flux shape to within 4e-8.
+
+### Mesh convergence test
+
+The script sweeps the mesh from N = 25 to N = 800 and prints the flux error at each resolution:
+
+| N | Δx | Flux Error | Order |
+|---:|---:|---:|---:|
+| 25 | 3.8462 | 3.8937e-08 | N/A |
+| 50 | 1.9608 | 4.2155e-08 | -0.118 |
+| 100 | 0.9901 | 4.0819e-08 | 0.047 |
+| 200 | 0.4975 | 4.0486e-08 | 0.012 |
+| 400 | 0.2494 | 4.0405e-08 | 0.003 |
+| 800 | 0.1248 | 4.0385e-08 | 0.001 |
+
+The flux error stays flat at around 4e-08 across all mesh sizes, and the observed order values are noise. This is a special property of the homogeneous slab with constant coefficients. The only remaining error should be round-off.
+
+The convergence test that actually tells us something is the **k_eff error**:
+
+| N | Δx | k_eff error | Observed order |
+|---:|---:|---:|---:|
+| 25 | 3.8462 | 3.497e-05 | N/A |
+| 50 | 1.9608 | 9.090e-06 | 1.944 |
+| 100 | 0.9901 | 2.317e-06 | 1.972 |
+| 200 | 0.4975 | 5.834e-07 | 1.989 |
+| 400 | 0.2494 | 1.451e-07 | 2.007 |
+| 800 | 0.1248 | 3.485e-08 | 2.057 |
+
+As the mesh refines, the observed order settles at 2. The slight overshoot at the finest mesh is round-off in the error measurement, not a change in how the discretization behaves. This confirms the central-difference stencil is second-order accurate for the eigenvalue.
+
+## References
+
+- J. J. Duderstadt, L. J. Hamilton, *Nuclear Reactor Analysis*, John Wiley & Sons, 1976.
+  - Chapter 5 — One-speed neutron diffusion equation, boundary conditions, and reactor criticality calculations for a bare slab.
+  - Chapter 7 — Finite difference spatial discretization, matrix eigenvalue formulation $A\phi = \frac{1}{k_{\text{eff}}} F \phi$, and the power iteration (source iteration) algorithm implemented in the solver.
