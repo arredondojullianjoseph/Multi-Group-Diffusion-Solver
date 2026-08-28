@@ -63,8 +63,8 @@ python analytical_verification.py
 Running `python Diffusion_1group.py` as-is prints:
 
 ```
-Converged in 79 iterations!
-k_eff = 1.068368
+Homogeneous: converged in 79 iterations, k_eff = 1.068368
+Two‑region : converged in 70 iterations, k_eff = 1.115333
 ```
 
 That slab is slightly supercritical by construction ($\nu\Sigma_f$ a bit larger than $\Sigma_a$), so $k_{\text{eff}}$ a bit above 1 is the expected result, confirming the solver runs and converges cleanly.
