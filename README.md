@@ -89,14 +89,14 @@ The solver finds the exact eigenvalue to within 6e-7 and the flux shape to withi
 
 The script sweeps the mesh from N = 25 to N = 800 and prints the flux error at each resolution:
 
-| N | Δx | Flux Error | Order |
-|---:|---:|---:|---:|
-| 25 | 3.8462 | 3.8937e-08 | N/A |
-| 50 | 1.9608 | 4.2155e-08 | -0.118 |
-| 100 | 0.9901 | 4.0819e-08 | 0.047 |
-| 200 | 0.4975 | 4.0486e-08 | 0.012 |
-| 400 | 0.2494 | 4.0405e-08 | 0.003 |
-| 800 | 0.1248 | 4.0385e-08 | 0.001 |
+| N | Delta_x | k_eff Error | Order |
+|---|---|---|---|
+| 25 | 3.8462 | 3.4970e-05 | N/A |
+| 50 | 1.9608 | 9.0903e-06 | 2.000 |
+| 100 | 0.9901 | 2.3165e-06 | 2.001 |
+| 200 | 0.4975 | 5.8341e-07 | 2.004 |
+| 400 | 0.2494 | 1.4508e-07 | 2.015 |
+| 800 | 0.1248 | 3.4852e-08 | 2.061 |
 
 The flux error stays flat at around 4e-08 across all mesh sizes, and the observed order values are noise. This is a special property of the homogeneous slab with constant coefficients. The only remaining error should be round-off.
 
