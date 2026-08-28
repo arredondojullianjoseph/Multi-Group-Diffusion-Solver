@@ -1,3 +1,9 @@
+"""
+Diffusion_1group.py
+
+Finite-difference solver for the 1D neutron diffusion eigenvalue problem, 
+using sparse matrix operations and power iteration to find k_eff and flux.
+"""
 import numpy as np
 from scipy.sparse import diags
 from scipy.sparse.linalg import splu
