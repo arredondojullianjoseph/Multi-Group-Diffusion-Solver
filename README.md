@@ -82,14 +82,14 @@ The homogeneous case is slightly supercritical by construction ($\nu\Sigma_f$ a 
 Running `python analytical_verification.py` runs two checks: a single run at N = 200 and a mesh sweep from N = 25 to N = 800.
  
 ### Single run check (N = 200)
-```
---- Single run check (N=200) ---
-Converged in 79 iterations!
-k_eff (numerical) = 1.068368
-k_eff (exact)     = 1.068367
-k_eff error       = 5.834e-07
-Flux max error    = 4.049e-08
-```
+| Metric | Value |
+| :--- | :--- |
+| **Iterations to Converge** | 79 |
+| **$k_{\text{eff}}$ (Numerical)** | 1.068368 |
+| **$k_{\text{eff}}$ (Exact)** | 1.068367 |
+| **$k_{\text{eff}}$ Error** | $5.834 \times 10^{-7}$ |
+| **Flux Max Error** | $4.049 \times 10^{-8}$ |
+
 The solver finds the exact eigenvalue to within 6e-7 and the flux shape to within 4e-8.
  
 ### Mesh convergence test
