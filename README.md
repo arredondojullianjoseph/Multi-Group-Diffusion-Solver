@@ -1,5 +1,5 @@
 # Multi-Group Diffusion Solver
-Status: On Hold ⏸️ 
+**Status:** On Hold ⏸️ 
  
 Welcome! I'm building this multi-group neutron diffusion solver from scratch in Python, starting with the simplest case: a bare, homogeneous, one-group slab. That core solver and analytical verification are now in place as well as generalizations to handle multiple material regions, and verification of that against an analytical two-region benchmark.
  
