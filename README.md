@@ -1,5 +1,8 @@
 # 1D Diffusion Eigenvalue Solver
-Welcome! I'm building this multi-group neutron diffusion solver from scratch in Python, starting with the simplest case: a bare, homogeneous, one-group slab. That core solver and analytical verification are now in place as well as generalizations to handle multiple material regions, and verification of that against an analytical two-region benchmark.
+
+[![tests](https://github.com/arredondojullianjoseph/Multi-Group-Diffusion-Solver/actions/workflows/tests.yml/badge.svg)](https://github.com/arredondojullianjoseph/Multi-Group-Diffusion-Solver/actions/workflows/tests.yml)
+
+One-group finite-difference neutron diffusion eigenvalue solver in Python, built from scratch as the base for a multi-group code. Solves for $k_{\text{eff}}$ and the flux shape with sparse LU factorization and power iteration, for a bare homogeneous slab and for slabs built from multiple material regions. Verified against the analytical bare-slab solution and an analytical two-region fuel–reflector benchmark. Automated tests cover the same checks.
  
 **Next Up:** Generalizing the solver to multiple energy groups
  
@@ -33,17 +36,24 @@ At a material interface, $D$ is discontinuous, but the neutron current, $D \, d\
 - **Multi-region verification:** Runs the mesh convergence sweep for the two-region benchmark. Compares the
 numerical solver against the exact two-region criticality solution as the
 mesh refines. Error shrinks first-order, not second-order like the homogeneous case. The fuel-reflector interface rarely lands exactly on a mesh face, and that mismatch is what caps the convergence rate.
+- **Automated tests:** `test_diffusion.py` turns the bare-slab and two-region checks into pass/fail assertions using pytest, and runs on every push via GitHub Actions.
   
 ## What's next?
 
 - **Multi-group extension:** generalize to multiple energy groups with inter-group scattering and a fission spectrum.
 - **Multi-group verification:** compare against a known two-group benchmark.
-- **Testing:** add an automated test suite.
 - **Documentation:** final polish pass.
   
+## Installation
+
+```bash
+pip install -e .
+pytest
+```
+
 ## Usage
  
-To run the core solver, make sure you have `numpy` and `scipy` installed, then run:
+To run the core solver:
  
 ```bash
 python Diffusion_1group.py

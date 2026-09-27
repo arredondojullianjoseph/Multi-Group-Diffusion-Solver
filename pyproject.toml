@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "diffusion_eigenvalue_solver"
+version = "0.1.0"
+description = "1D finite-difference neutron diffusion eigenvalue solver with analytical bare-slab and two-region verification"
+readme = "README.md"
+authors = [{ name = "Jullian J. Arredondo", email = "arredondojullianjoseph@gmail.com" }]
+license = { text = "MIT" }
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.24.0",
+    "scipy>=1.10.0",
+    "matplotlib>=3.7.0",
+    "pytest>=7.0",
+]
+
+[tool.setuptools]
+py-modules = [
+    "Diffusion_1group",
+    "analytical_verification",
+    "two_region_verification",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
