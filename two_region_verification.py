@@ -7,6 +7,7 @@ bare slab with vacuum boundary conditions
 """
 
 import numpy as np
+import matplotlib.pyplot as plt
 from scipy.optimize import brentq
 from Diffusion_1group import make_matrices, build_region_arrays, find_k_eff
 
@@ -33,6 +34,22 @@ def exact_k_two_region(D1, Sigma_a1, nu_Sigma_f1, D2, Sigma_a2, a, L, bracket):
     return brentq(lambda k: residual(k, D1, Sigma_a1, nu_Sigma_f1, D2, Sigma_a2, a, L), *bracket)
 
 
+def exact_flux_two_region(x, k, D1, Sigma_a1, nu_Sigma_f1, D2, Sigma_a2, a, L):
+    """
+    Evaluates the exact two-region flux shape at the given k_eff.
+    Fuel is sin(B1 * x), reflector is sinh(kappa2 * (L - x)) scaled so the
+    two pieces match at the interface. Returns the flux normalized by its max.
+    """
+    B1 = np.sqrt((nu_Sigma_f1 / k - Sigma_a1) / D1)
+    kappa2 = np.sqrt(Sigma_a2 / D2)
+
+    # Continuity at x = a fixes the reflector amplitude
+    C = np.sin(B1 * a) / np.sinh(kappa2 * (L - a))
+
+    phi = np.where(x < a, np.sin(B1 * x), C * np.sinh(kappa2 * (L - x)))
+    return phi / np.max(np.abs(phi))
+
+
 if __name__ == "__main__":
     """
     Finds the exact k_eff once, then compares it against the numerical solver at five
@@ -45,6 +62,8 @@ if __name__ == "__main__":
     print(f"{'N':>5} | {'Delta_x':>9} | {'k_eff error':>12} | {'Order':>6}")
     print("-" * 45)
     prev_err, prev_dx = None, None
+    N_plot = 280
+    x_plot, phi_plot = None, None
     for N in [70, 140, 280, 560, 1120]:
         D, Sigma_a, nu_Sigma_f = build_region_arrays(
             regions=[(0.0, a, D1, Sigma_a1, nu_Sigma_f1), (a, L, D2, Sigma_a2, 0.0)],
@@ -62,3 +81,16 @@ if __name__ == "__main__":
             order_str = "N/A"
         print(f"{N:>5} | {Delta_x:>9.5f} | {k_err:>12.4e} | {order_str:>6}")
         prev_err, prev_dx = k_err, Delta_x
+        if N == N_plot:
+            x_plot, phi_plot = x, phi_num
+
+    # Flux comparison at a single representative mesh
+    phi_exact = exact_flux_two_region(x_plot, k_exact, D1, Sigma_a1, nu_Sigma_f1, D2, Sigma_a2, a, L)
+    plt.plot(x_plot, phi_exact, label="Analytical")
+    plt.plot(x_plot, phi_plot, "--", label="Numerical")
+    plt.axvline(a, color="gray", linestyle=":", label="Fuel/reflector interface")
+    plt.xlabel("x (cm)")
+    plt.ylabel("Normalized flux")
+    plt.title(f"Two-region flux comparison (N = {N_plot})")
+    plt.legend()
+    plt.show()

@@ -3,7 +3,7 @@
  
 Welcome! I'm building this multi-group neutron diffusion solver from scratch in Python, starting with the simplest case: a bare, homogeneous, one-group slab. That core solver and analytical verification are now in place as well as generalizations to handle multiple material regions, and verification of that against an analytical two-region benchmark.
  
-**Next Up:** Adding a flux comparison plot for the two-region verification
+**Next Up:** Generalizing the solver to multiple energy groups
  
 **Scope:** A self-study project to verify the neutron diffusion equation and experiment with numerical methods.
  
@@ -38,7 +38,7 @@ mesh refines. Error shrinks first-order, not second-order like the homogeneous c
   
 ## What's next?
  
-- **Visualization:** add a flux comparison plot (numerical vs. analytical) to the two-region verification.
+- ~~**Visualization:** add a flux comparison plot (numerical vs. analytical) to the two-region verification.~~ Done.
 - **Multi-group extension:** generalize to multiple energy groups with inter-group scattering and a fission spectrum.
 - **Multi-group verification:** compare against a known two-group benchmark.
 - **Testing:** add an automated test suite.
@@ -139,6 +139,8 @@ Running `python two_region_verification.py` on a 50 cm fuel / 20 cm reflector sl
 | 1120 | 0.06244 | 2.934e-05 | 0.992 |
  
 Order climbs toward 1, not 2 because the fuel-reflector interface typically doesn't land exactly on a mesh face.
+
+After the sweep, the script also plots the numerical flux against the analytical one at N = 280, with the fuel-reflector interface marked. The two curves sit on top of each other to within about 3e-03, and the kink at the interface — flux continuous, slope not — shows up in both.
 ## References
  
 - J. J. Duderstadt, L. J. Hamilton, *Nuclear Reactor Analysis*, John Wiley & Sons, 1976.

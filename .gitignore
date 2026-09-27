@@ -14,6 +14,9 @@ env/
 # Pytest Cache
 .pytest_cache/
 
+# Private notes (never committed)
+notes/
+
 # IDE and System Files
 .vscode/
 .idea/
