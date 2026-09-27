@@ -1,6 +1,4 @@
 # 1D Diffusion Eigenvalue Solver
-**Status:** (one-group complete; multi-group not started)
- 
 Welcome! I'm building this multi-group neutron diffusion solver from scratch in Python, starting with the simplest case: a bare, homogeneous, one-group slab. That core solver and analytical verification are now in place as well as generalizations to handle multiple material regions, and verification of that against an analytical two-region benchmark.
  
 **Next Up:** Generalizing the solver to multiple energy groups
@@ -37,8 +35,7 @@ numerical solver against the exact two-region criticality solution as the
 mesh refines. Error shrinks first-order, not second-order like the homogeneous case. The fuel-reflector interface rarely lands exactly on a mesh face, and that mismatch is what caps the convergence rate.
   
 ## What's next?
- 
-- ~~**Visualization:** add a flux comparison plot (numerical vs. analytical) to the two-region verification.~~ Done.
+
 - **Multi-group extension:** generalize to multiple energy groups with inter-group scattering and a fission spectrum.
 - **Multi-group verification:** compare against a known two-group benchmark.
 - **Testing:** add an automated test suite.
@@ -75,7 +72,7 @@ Homogeneous: converged in 79 iterations, k_eff = 1.068368
 Two‑region : converged in 48 iterations, k_eff = 1.108446
 ```
  
-The homogeneous case is slightly supercritical by construction ($\nu\Sigma_f$ a bit larger than $\Sigma_a$), so $k_{\text{eff}}$ a bit above 1 there is expected. The two-region line is just a quick sanity check that `build_region_arrays` and `make_matrices` run together without error — it's a different material setup than the actual verification benchmark below, not the same test.
+The homogeneous case is slightly supercritical by construction ($\nu\Sigma_f$ a bit larger than $\Sigma_a$), so $k_{\text{eff}}$ a bit above 1 there is expected. The two-region line is just a quick sanity check that `build_region_arrays` and `make_matrices` run together without error it's a different material setup than the actual verification benchmark below, not the same test.
  
 ## Analytical Verification
  
